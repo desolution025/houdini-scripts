@@ -80,18 +80,23 @@ def match_mat_rule(attr: str=''):
 
 
 def main(*nodes : hou.Node):
-    for node in nodes:
-        valid_mats = read_mtls(node)
-        logger.info(valid_mats)
-        logger.info(f"Number of valid materials: {len(valid_mats)}")
+    try:
+        for node in nodes:
+            valid_mats = read_mtls(node)
+            logger.info(valid_mats)
+            logger.info(f"Number of valid materials: {len(valid_mats)}")
 
-        mat_net = find_mat_net(node)
-        assert mat_net, "Did not found the matnet"
+            mat_net = find_mat_net(node)
+            assert mat_net, "Did not found the matnet"
 
-        simplify_mtls(mat_net, valid_mats)
-    
+            simplify_mtls(mat_net, valid_mats)
+    except BaseException as e:
+        logger.exception(e)
+        hou.ui.displayMessage('Error happened when solvering, visit the log to check details')
+    else:
+        hou.ui.displayMessage('Processing Completed')
 
 
 if __name__ == "__main__":
-    test_node = hou.node("/obj/KB3D_SecretLab_Native_fbx")
-    main(test_node)
+    sels = [n for n in hou.selectedNodes() if n.isSubNetwork()]
+    main(*sels)
