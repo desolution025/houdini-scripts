@@ -3,13 +3,10 @@ from os import PathLike
 from loguru import logger
 import hou
 
-def isMatnet(node: hou.Node):
-    return node.path() == "/mat" or isinstance(node, hou.ShopNode) or node.type().name() == "materiallibrary"
-
 
 def getCurMatnet() -> hou.Node:
     """Find active matnet"""
-    panes :tuple[hou.PaneTab] = [p for p in hou.ui.currentPaneTabs() if isinstance(p, hou.NetworkEditor) and isMatnet(p.pwd())]
+    panes :tuple[hou.PaneTab] = [p for p in hou.ui.currentPaneTabs() if isinstance(p, hou.NetworkEditor) and p.pwd().isMaterialManager()]
 
     # return /mat if no active matnet
     if not panes:
@@ -125,6 +122,7 @@ def gen_mat(parent: hou.Node, name: str, texs: Mapping[str, PathLike]):
         remapdisplace.setInput(0, displace)
     
     matnet.layoutChildren()
+    matnet.setGenericFlag(hou.nodeFlag.Material, True)
     logger.info(f"Create Material {name} in {matnet.path()}")
     return matnet
 
