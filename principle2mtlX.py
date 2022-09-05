@@ -5,7 +5,6 @@ except ImportError:
     import hou
 from loguru import logger
 
-logger.level("WARNING")
 
 COLOR_CHANNELS = ["basecolor", "transcolor", "emitcolor", "opaccolor"]
 FLOAT_CHANNELS = ["metallic", "rough", "ior", "aniso", "anisodir", "reflect", "coatrough", "transdist", "sheen"]
