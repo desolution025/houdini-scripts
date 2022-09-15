@@ -28,7 +28,12 @@ from pathlib2 import Path
 assetname = hou.parm('/stage/part_info/partname').eval()
 folder = Path(r"F:/3D Models\Model Pack/KitBash3D/Kitbash3D-Edo Japan/usd")
 usdpath : Path = folder/(assetname + ".usd")
-thumbnailpath : Path= folder/(assetname + "_thumbnail.usd")
+thumbnailpath : Path= folder/(assetname + "_thumbnail.png")
 if usdpath.exists() and thumbnailpath.exists():
     add_asset(assetname, usdpath, thumbnailpath)
 
+for usd in folder.glob("*.usd"):
+    assetname = usd.stem
+    thumbnailpath = folder/"thumbnails"/(assetname + "_thumbnail.png")
+    if thumbnailpath.exists():
+        add_asset(assetname, str(usd), thumbnailpath)
