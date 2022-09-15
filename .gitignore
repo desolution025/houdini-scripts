@@ -138,3 +138,8 @@ dmypy.json
 
 # Local History for Visual Studio Code
 .history/
+
+
+# test file
+
+__test__/
