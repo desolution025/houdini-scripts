@@ -6,24 +6,10 @@ try:
     from pathlib2 import Path
 except ImportError:
     from pathlib import Path
-try:
-    import ujson as json
-except ImportError:
-    import json
 from loguru import logger
 
+# logger.remove()
 
-DIFFUSE = ("diffuse", "albedo", "color", "basecolor", "diff")
-SPECULAR = ("specular", "spec")
-ROUGHNESS = ("roughness",)
-GLOSSINESS = ("glossiness",)
-NORMAL = ("normal", "nrm")
-BUMP = ("bump", "bmp")
-HEIGHT = ("height",)
-DISPLACEMENT = ("displacement", "disp")
-OPACITY = ("opacity", "opac")
-TRANSLUCENCY = ("translucency",)
-TRANSMISSION = ("transmission",)
 
 TEXSUFFIX = ('exr','png', 'jpg', 'jpeg')
 
@@ -33,19 +19,21 @@ class PBR_Tex_Folder:
 
     channels_mapping = {
                     "Diffuse": ["diffuse", "albedo", "basecolor", "color", "diff"],
+                    "Metalness": ["metalness", "metallic", "metal"],
                     "Specular": ["specular", "spec"],
-                    "Metalness": ["metalness", "metallic"],
+                    "Reflection": ["reflection", "refl"],
                     "Roughness": ["roughness", "rough"],
                     "Glossiness": ["glossiness", "gloss"],
                     "IOR": ["ior"],
-                    "Normal": ["normal", "nrm"],
+                    "Normal": ["normal", "nrm", "norm_ogl", "norm_dx"],
                     "Bump": ["bump", "bmp"],
                     "Height": ["height",],
                     "Displacement": ["displacement", "disp"],
                     "Opacity": ["opacity", "opac"],
                     "Translucency": ["translucency"],
                     "Transmission": ["transmission"],
-                    "Emission": ["emission"]
+                    "Emission": ["emission", "emissive"],
+                    "Occlusion": ["ao", "occlusion", "ambient_occlusion"]
                 }
     tex_suffix = ['exr','png', 'jpg', 'jpeg']
 

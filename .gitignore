@@ -141,5 +141,8 @@ dmypy.json
 
 
 # test file
-
 __test__/
+
+
+# data file
+input_mapping/
