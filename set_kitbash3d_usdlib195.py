@@ -1,42 +1,43 @@
 from os import PathLike
+from pathlib2 import Path
 try:
     from connect_houdini import hou
 except ImportError:
     import hou
-from hou import Node
-from PySide2 import QtGui
 from loguru import logger
 
 
 def add_asset(db : hou.AssetGalleryDataSource, name: str, path: PathLike, thumbnail_path: PathLike):
     # read in the thumbnail
-    thumbnail = QtGui.QImage()
-    thumbnail.load(thumbnail_path)
-    from pathlib2 import Path
-    Path.read_bytes()
+    thumbnail = Path(thumbnail_path).read_bytes()
+
     # add the database entry
     item_uuid = db.addItem(
         name,
-        path,
+        str(path),
         thumbnail)
     logger.success(f'insert a new asset uuid: {item_uuid}')
 
+def batch_addItem(folder: PathLike):
+    # assert_db: hou.AssetGalleryDataSource):
+    usd_folder = Path(hou.expandString(folder))
+    logger.debug(f"Choosed the usd folder: {usd_folder}")
 
-# set the db file to be something specific
-# hou.qt.AssetGallery.setAssetDBFile("d:/myproject/MyProject_AssetGalleryDb.db")
+    assert_db = hou.ui.sharedLayoutDataSource()
 
-from pathlib2 import Path
-# assetname = hou.parm('/stage/part_info/partname').eval()
-folder = Path(r"F:/3D Models\Model Pack/KitBash3D/Kitbash3D-Edo Japan/usd")
-# usdpath : Path = folder/(assetname + ".usd")
-# thumbnailpath : Path= folder/(assetname + "_thumbnail.png")
-# if usdpath.exists() and thumbnailpath.exists():
-#     add_asset(assetname, usdpath, thumbnailpath)
+    thumbnailfolder = usd_folder.glob("thumbnails")
+    if thumbnailfolder:
+        thumbnailfolder = list(thumbnailfolder)[0]
+        logger.debug(f"Thumbnails folder {thumbnailfolder}")
+        for usd in usd_folder.glob("*"):
+            if usd.is_dir() and not usd.samefile(thumbnailfolder):
+                add_asset(assert_db, str(usd.name), str(usd/(str(usd.name) + ".usd")), thumbnailfolder/(str(usd.name) + ".png"))
+    else:
+        logger.warning("Did not found thumbnails folder")
+    
+    #Refresh Asset Gallery
+    hou.ui.reloadSharedLayoutDataSource()
 
-for usd in folder.glob("*.usd"):
-    assetname = usd.stem
-    thumbnailpath = folder/"thumbnails"/(assetname + "_thumbnail.png")
-    if thumbnailpath.exists():
-        add_asset(assetname, str(usd), thumbnailpath)
-
-hou.ui.reloadSharedLayoutDataSource()
+if __name__ == "__main__":
+    folder : PathLike = hou.ui._selectFile(title="Choose USD Directory", file_type=hou.fileType.Directory, chooser_mode=hou.fileChooserMode.Read)
+    batch_addItem(folder)
